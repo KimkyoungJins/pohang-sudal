@@ -36,24 +36,29 @@
 ## 전체 기능 목록
 
 ### 1. 메인 랜딩 페이지 (`/`)
-- **Hero 섹션**: 하늘색→핑크 그라데이션 풀스크린 히어로, 플로팅 애니메이션
+- **Hero 섹션**: 하늘색→핑크 그라데이션 풀스크린 히어로, 플로팅 애니메이션 + **날씨 위젯**
 - **편집 스타일 소개문**: 세리프 폰트 인용구
-- **벤토 그리드 투어 카드**: 5개 투어를 매거진 스타일 레이아웃으로 표시
+- **벤토 그리드 투어 카드**: 5개 기본 투어를 매거진 스타일 레이아웃으로 표시
+- **시즌 투어 섹션**: 시즌별 특별 투어 3개 카드 (겨울/봄/여름)
 - **Why Pohang Sudal**: 자격증, 로컬 지식, 맞춤 서비스 3가지 강점
 - **설문 CTA**: 그라데이션 배경의 투어 추천 설문 유도
-- **고객 리뷰 섹션**: Firebase에서 리뷰 로드 + 샘플 리뷰 표시
+- **고객 리뷰 섹션**: Firebase에서 리뷰 로드 + 샘플 리뷰 표시 + **외부 리뷰 배지** (Google 4.9/5, TripAdvisor 5.0/5)
 - **블로그 미리보기**: 최근 3개 블로그 글 카드
+- **Instagram 피드**: 9개 큐레이팅 사진 3열 그리드 (호버 효과)
 
 ### 2. 투어 목록 (`/tours`)
-- 5개 투어 전체 그리드 표시
-- 카테고리 필터 배지 (Sunrise, Food, Culture, Nature, Coastal)
+- 8개 투어 전체 그리드 표시 (기본 5개 + 시즌 3개)
+- 카테고리 필터 배지 (Sunrise, Food, Culture, Nature, Coastal, Seasonal)
+- **투어 비교 링크**: "Compare All Tours →" 로 `/compare` 이동
 - 커스텀 투어 요청 CTA
 
 ### 3. 투어 상세 (`/tours/[slug]`)
-- SSG로 5개 투어 페이지 사전 생성 (`generateStaticParams`)
-- 투어별 고유 그라데이션 히어로
+- SSG로 8개 투어 페이지 사전 생성 (`generateStaticParams`)
+- 투어별 고유 그라데이션 히어로 + **시즌 배지** (시즌 투어에만 표시)
 - 설명, 하이라이트, 포함/미포함 사항
-- 사이드바: 가격, 시간, 난이도, 예약 버튼
+- **투어 경로 지도**: Google Maps / Naver Maps 토글 (API 키 없으면 텍스트 목록 fallback)
+- 사이드바: 가격, 시간, 난이도, 예약 버튼, **쿠폰 코드 입력**, **투어 캘린더**
+- **투어 스케줄 캘린더**: 순수 CSS/JS 월별 달력, 날짜 클릭 → 예약 페이지 이동
 - **고객 리뷰**: 해당 투어 필터링된 리뷰 표시 + 리뷰 작성 폼
 - **JSON-LD 구조화 데이터**: `TouristTrip` 스키마
 
@@ -69,15 +74,20 @@
 ### 5. 예약 시스템 (`/booking`)
 - 필수 필드: 이름, 이메일, 투어 선택, 날짜, 인원 수
 - 선택 필드: 전화번호, 국적, 메시지
-- **URL 파라미터 연동**: `?tour=homigot-sunrise`로 투어 사전 선택
+- **쿠폰 코드 입력**: 할인 코드 적용 + 할인 가격 실시간 표시
+- **URL 파라미터 연동**: `?tour=homigot-sunrise&date=2026-04-01`로 투어/날짜 사전 선택
 - **Google 로그인 자동 채우기**: 로그인 시 이름/이메일 자동 입력
 - 제출 시: Firestore `bookings` 저장 → `/api/send-email` 호출
 
 ### 6. 블로그 (`/blog`, `/blog/[slug]`)
-- 3개 SEO 콘텐츠 글:
+- 7개 SEO 콘텐츠 글:
   - "Top 10 Things to Do in Pohang" (Travel Guide, 8분)
   - "Homigot Sunrise: Complete Guide" (Destination Guide, 6분)
   - "A Foreigner's Guide to Korean Seafood" (Food Guide, 7분)
+  - "Getting Around Pohang: Transportation Guide" (Travel Guide, 6분) *(NEW)*
+  - "Where to Stay in Pohang: Accommodations" (Accommodation, 7분) *(NEW)*
+  - "Pohang Through the Seasons" (Seasonal Guide, 8분) *(NEW)*
+  - "10 Essential Tips for First-Time Visitors" (Travel Tips, 5분) *(NEW)*
 - **커스텀 마크다운 렌더러**: `##`, `###`, `-` 리스트, `**볼드**`, `[링크](url)`, `---` 구분선 지원
 - 투어 페이지로의 **내부 크로스 링크** (SEO 가치)
 - `BlogPosting` JSON-LD 스키마
@@ -85,11 +95,16 @@
 ### 7. About 페이지 (`/about`)
 - 가이드 자기소개 (관광통역안내사 자격증)
 - Why Pohang 4가지 매력 카드 (Coastal Beauty, Seafood, History, Steel City)
+- **YouTube 영상 섹션**: 4개 반응형 16:9 iframe 임베드 2열 그리드
 - 자격/보증 섹션 (정부 자격증, 보험, 만족 보증)
 - CTA: Browse Tours + Contact Me
 
 ### 8. 관리자 대시보드 (`/admin`)
 - **이메일 기반 접근 제어**: `kkjin722@gmail.com`만 접근 가능
+- **통계 카드**: 총 예약 수, 예상 매출, 인기 투어, 이번 주 신규 예약
+- **투어별 바 차트**: CSS/SVG 기반 가로 바 차트 (투어별 예약 수)
+- **날짜 필터링**: from/to 날짜 입력으로 예약 필터링
+- **CSV 내보내기**: 전체 예약 데이터 CSV 다운로드
 - **예약 관리 탭**: 고객명, 투어, 날짜, 상태 표시 + 상태 변경 (confirmed/cancelled)
 - **설문 관리 탭**: 고객 관심사, 여행 일정, 추천 투어 확인
 - Firestore에서 실시간 데이터 로드
@@ -103,12 +118,15 @@
 ### 10. Stripe 결제 (`/api/checkout`)
 - `POST` 요청으로 Checkout Session 생성
 - 투어명, 가격, 수량, 고객 이메일 받아서 USD 결제 세션 생성
+- **쿠폰 코드 서버 검증**: 클라이언트에서 전달된 쿠폰을 서버에서 재검증 후 할인 적용
 - 결제 성공/취소 시 `/booking` 페이지로 리다이렉트
 - **Graceful degradation**: `STRIPE_SECRET_KEY` 미설정 시 에러 대신 안내 메시지 반환
 
 ### 11. 이메일 알림 (`/api/send-email`)
-- **관리자 이메일**: HTML 테이블 형태로 예약 상세 정보 + 대시보드 링크
-- **고객 확인 이메일**: 예약 접수 확인 + 24시간 내 연락 안내
+- **브랜드 HTML 이메일 템플릿**: 그라데이션 헤더 (sky→pink), 투어 가격 표시
+- **관리자 이메일**: 예약 상세 정보 테이블 + 대시보드 링크 버튼
+- **고객 확인 이메일**: "Booking Confirmed!" 헤더, 예약 요약 카드, "What's Next?" 3단계 안내
+- **에러 분리 처리**: 관리자/고객 이메일 독립 전송 (하나 실패해도 다른 하나 정상 전송)
 - **Lazy import**: `RESEND_API_KEY` 미설정 시 빌드 에러 없이 스킵
 
 ### 12. 실시간 채팅 버튼 (FloatingChat)
@@ -130,6 +148,49 @@
 - `NEXT_PUBLIC_GA_ID` 설정 시 GA4 스크립트 자동 삽입
 - `afterInteractive` 전략으로 성능 영향 최소화
 - 미설정 시 렌더링하지 않음
+
+### 15. 투어 비교 페이지 (`/compare`) *(NEW)*
+- 모든 투어를 테이블로 나란히 비교 (가격, 시간, 난이도, 그룹 크기, 하이라이트)
+- 시즌 투어에 시즌 배지 표시
+- 모바일: `overflow-x-auto` 가로 스크롤 지원
+
+### 16. 시즌별 특별 투어 *(NEW)*
+- **Tour 인터페이스 확장**: `seasonal?`, `seasonalLabel?`, `availableMonths?`, `availableDays?` 필드 추가
+- 3개 시즌 투어:
+  - Winter Gwamegi & Hot Springs Tour ($99, 겨울 11-2월)
+  - Spring Cherry Blossom & Coastal Walk ($85, 봄 3-4월)
+  - Summer Beach & Water Sports Adventure ($110, 여름 6-8월)
+- TourCard/투어 상세 페이지에 시즌 배지 표시
+- 메인 페이지에 "Seasonal Specials" 섹션
+
+### 17. 날씨 위젯 *(NEW)*
+- **API 프록시**: `/api/weather` — OpenWeatherMap API, 30분 서버 캐시
+- **Hero 통합**: 포항 현재 기온, 날씨 아이콘, 설명 표시
+- **Graceful fallback**: `OPENWEATHERMAP_API_KEY` 미설정 시 위젯 미렌더링
+
+### 18. 쿠폰/할인 코드 시스템 *(NEW)*
+- 3개 쿠폰: `WELCOME10` (10%), `SPRING2026` ($15 할인), `GROUP20` (20%, 4인 이상)
+- BookingForm + PayButton에 쿠폰 입력 UI
+- 할인 가격 실시간 계산 및 표시
+- `/api/checkout`에서 서버 측 쿠폰 검증 후 Stripe 반영
+
+### 19. Google Maps + Naver Maps 투어 경로 *(NEW)*
+- `tour-routes.ts`: 8개 투어별 좌표 데이터 (정류장, 중심점, 줌 레벨)
+- `TourMap.tsx`: Google Maps / Naver Maps 토글 지도
+  - Google Maps: `NEXT_PUBLIC_GOOGLE_MAPS_API_KEY`
+  - Naver Maps: `NEXT_PUBLIC_NAVER_MAPS_CLIENT_ID`
+  - 키 없으면 번호 매긴 텍스트 목록으로 fallback
+
+### 20. Instagram 피드 *(NEW)*
+- 수동 큐레이팅 방식: 9개 포항 사진 (이모지 placeholder + 호버 캡션)
+- 3열 `aspect-square` 그리드, 호버 시 캡션 오버레이
+- 메인 페이지 하단에 표시
+
+### 21. PWA (Progressive Web App) *(NEW)*
+- `public/manifest.json`: 앱 매니페스트 (이름, 아이콘, 테마 색상)
+- `public/sw.js`: 서비스 워커 (정적 캐시 + 네트워크 우선 API)
+- `PWAInstallPrompt.tsx`: "Install Pohang Sudal" 배너 (모바일/데스크톱)
+- `layout.tsx`: manifest 링크, theme-color, apple-mobile-web-app 메타태그
 
 ---
 
@@ -172,41 +233,66 @@
 pohang-sudal/
 ├── src/
 │   ├── app/                          # Next.js App Router 페이지
-│   │   ├── layout.tsx                # 루트 레이아웃 (Navbar, Footer, Auth, GA, JSON-LD)
+│   │   ├── layout.tsx                # 루트 레이아웃 (Navbar, Footer, Auth, GA, PWA, JSON-LD)
 │   │   ├── page.tsx                  # 메인 랜딩 페이지
 │   │   ├── globals.css               # Tailwind v4 테마 + 커스텀 CSS
+│   │   ├── sitemap.ts                # 동적 사이트맵 생성
+│   │   ├── robots.ts                 # robots.txt 생성
+│   │   ├── not-found.tsx             # 404 페이지
 │   │   ├── tours/
 │   │   │   ├── page.tsx              # 투어 목록
-│   │   │   └── [slug]/page.tsx       # 투어 상세 (SSG, 리뷰, JSON-LD)
+│   │   │   └── [slug]/page.tsx       # 투어 상세 (SSG, 지도, 캘린더, 리뷰, JSON-LD)
 │   │   ├── blog/
 │   │   │   ├── page.tsx              # 블로그 목록
 │   │   │   └── [slug]/page.tsx       # 블로그 글 (SSG, 마크다운 렌더러)
+│   │   ├── compare/page.tsx          # 투어 비교 테이블 (NEW)
 │   │   ├── survey/page.tsx           # 설문조사 (투어 추천)
 │   │   ├── booking/page.tsx          # 예약/문의
-│   │   ├── about/page.tsx            # 가이드 소개
-│   │   ├── admin/page.tsx            # 관리자 대시보드 (이메일 보호)
+│   │   ├── about/page.tsx            # 가이드 소개 + YouTube 영상
+│   │   ├── faq/page.tsx              # FAQ 페이지
+│   │   ├── admin/page.tsx            # 관리자 대시보드 (통계, 차트, CSV)
 │   │   └── api/
-│   │       ├── checkout/route.ts     # Stripe 결제 API
-│   │       └── send-email/route.ts   # Resend 이메일 알림 API
+│   │       ├── checkout/route.ts     # Stripe 결제 API (쿠폰 서버 검증)
+│   │       ├── send-email/route.ts   # 브랜드 HTML 이메일 알림 API
+│   │       └── weather/route.ts      # OpenWeatherMap 프록시 (30분 캐시) (NEW)
 │   │
 │   ├── components/                   # React 컴포넌트
 │   │   ├── AuthProvider.tsx          # Firebase Auth 컨텍스트 + useAuth 훅
 │   │   ├── Navbar.tsx                # 스크롤 반응형 네비게이션 + 인증
 │   │   ├── Footer.tsx                # 사이트 푸터
-│   │   ├── Hero.tsx                  # 풀스크린 히어로 섹션
-│   │   ├── TourCard.tsx              # 투어 카드 (default/wide/tall 변형)
+│   │   ├── Hero.tsx                  # 풀스크린 히어로 섹션 + 날씨 위젯
+│   │   ├── TourCard.tsx              # 투어 카드 (시즌 배지 포함)
+│   │   ├── TourCalendar.tsx          # 월별 달력 (날짜 → 예약 연동) (NEW)
+│   │   ├── TourMap.tsx               # Google/Naver Maps 토글 지도 (NEW)
+│   │   ├── WeatherWidget.tsx         # 포항 날씨 위젯 (NEW)
+│   │   ├── YouTubeSection.tsx        # YouTube 영상 2열 그리드 (NEW)
+│   │   ├── ExternalReviews.tsx       # Google/TripAdvisor 리뷰 배지 (NEW)
+│   │   ├── InstagramFeed.tsx         # Instagram 피드 3열 그리드 (NEW)
+│   │   ├── PWAInstallPrompt.tsx      # PWA 설치 배너 (NEW)
+│   │   ├── PayButton.tsx             # Stripe 결제 버튼 (쿠폰 지원)
 │   │   ├── SurveyForm.tsx            # 4단계 설문 위저드 + 추천 알고리즘
-│   │   ├── BookingForm.tsx           # 예약 폼 (Auth 자동채우기, Firestore 저장)
+│   │   ├── BookingForm.tsx           # 예약 폼 (쿠폰, Auth 자동채우기)
 │   │   ├── Reviews.tsx               # 리뷰 표시/작성 (Firebase + 샘플 데이터)
+│   │   ├── ShareButtons.tsx          # 소셜 공유 버튼
 │   │   ├── FloatingChat.tsx          # WhatsApp/KakaoTalk/Email 플로팅 버튼
+│   │   ├── CookieConsent.tsx         # GDPR 쿠키 동의 배너
+│   │   ├── Newsletter.tsx            # 뉴스레터 구독
 │   │   └── GoogleAnalytics.tsx       # GA4 스크립트 (조건부 렌더링)
 │   │
-│   └── lib/                          # 데이터 및 유틸리티
-│       ├── firebase.ts               # Firebase App/Auth/Firestore 초기화
-│       ├── tours.ts                  # 5개 투어 데이터 (Tour 인터페이스)
-│       └── blog.ts                   # 3개 블로그 글 데이터 (BlogPost 인터페이스)
+│   ├── lib/                          # 데이터 및 유틸리티
+│   │   ├── firebase.ts               # Firebase App/Auth/Firestore 초기화
+│   │   ├── tours.ts                  # 8개 투어 데이터 (시즌 투어 포함)
+│   │   ├── blog.ts                   # 7개 블로그 글 데이터
+│   │   ├── coupons.ts                # 쿠폰 데이터 + 검증 로직 (NEW)
+│   │   └── tour-routes.ts            # 투어별 좌표/경로 데이터 (NEW)
+│   │
+│   └── types/
+│       └── maps.d.ts                 # Google/Naver Maps 타입 선언 (NEW)
 │
-├── public/images/                    # 이미지 (현재 SVG 플레이스홀더)
+├── public/
+│   ├── images/                       # 이미지 (현재 SVG 플레이스홀더)
+│   ├── manifest.json                 # PWA 앱 매니페스트 (NEW)
+│   └── sw.js                         # 서비스 워커 (정적 캐시) (NEW)
 ├── next.config.ts                    # Google 프로필 이미지 도메인 허용
 ├── firebase.json                     # Firestore 규칙 파일 경로
 ├── firestore.rules                   # Firestore 보안 규칙
@@ -241,6 +327,10 @@ interface Tour {
   meetingPoint: string;   // 미팅 장소
   difficulty: "Easy" | "Moderate" | "Challenging";
   image: string;          // 이미지 경로
+  seasonal?: boolean;     // 시즌 투어 여부 (NEW)
+  seasonalLabel?: string; // "Winter Special" 등 (NEW)
+  availableMonths?: number[]; // 운영 월 [1-12] (NEW)
+  availableDays?: number[];   // 운영 요일 [0=일-6=토] (NEW)
 }
 ```
 
@@ -270,6 +360,9 @@ function isAdmin() {
 | 3 | Guryongpo Heritage Walk | `guryongpo-heritage` | 5시간 (09:00-14:00) | $95 | Easy | 일본인가옥거리, 근대역사관, 해산물 점심 |
 | 4 | Temple & Waterfall Hiking | `temple-waterfall-hiking` | 7시간 (08:00-15:00) | $120 | Moderate | 보경사(602년), 내연산 12폭포 |
 | 5 | Steel City & Ocean View | `steel-city-ocean-view` | 4.5시간 (13:00-17:30) | $79 | Easy | POSCO, 환호공원 스페이스워크, 영일대 |
+| 6 | Winter Gwamegi & Hot Springs | `winter-gwamegi` | 5시간 (11:00-16:00) | $99 | Easy | 🐟 **시즌** (11-2월) 과메기 시식, 온천, 해물탕 |
+| 7 | Spring Cherry Blossom Walk | `spring-cherry-blossom` | 4.5시간 (09:30-14:00) | $85 | Easy | 🌸 **시즌** (3-4월) 형산강 벚꽃길, 해안 벚꽃, 도시락 |
+| 8 | Summer Beach Adventure | `summer-beach-adventure` | 6시간 (10:00-16:00) | $110 | Moderate | 🏖️ **시즌** (6-8월) 스노클링, 카약, 빙수, 해산물 |
 
 ---
 
@@ -317,6 +410,15 @@ RESEND_API_KEY=re_xxx
 
 # Google Analytics (선택 — 없으면 GA 비활성화)
 NEXT_PUBLIC_GA_ID=G-XXXXXXXXXX
+
+# Weather Widget (선택 — 없으면 날씨 위젯 미표시)
+OPENWEATHERMAP_API_KEY=your-openweathermap-key
+
+# Google Maps (선택 — 없으면 텍스트 목록으로 fallback)
+NEXT_PUBLIC_GOOGLE_MAPS_API_KEY=your-google-maps-key
+
+# Naver Maps (선택 — 없으면 텍스트 목록으로 fallback)
+NEXT_PUBLIC_NAVER_MAPS_CLIENT_ID=your-naver-maps-client-id
 ```
 
 ### 개발 서버 실행
@@ -371,10 +473,12 @@ npx vercel --prod       # Vercel에 배포
 - **동적 데이터** (예약, 설문, 리뷰): Firebase Firestore → 실시간 CRUD. 서버리스로 백엔드 관리 불필요.
 
 ### 2. Graceful Degradation (선택적 서비스)
-Stripe, Resend, GA는 API 키가 없어도 앱이 정상 작동합니다:
+모든 외부 API 키가 없어도 앱이 정상 작동합니다:
 - Stripe 미설정 → 결제 대신 안내 메시지 반환
 - Resend 미설정 → 이메일 스킵, 예약은 Firestore에 정상 저장
 - GA 미설정 → 스크립트 렌더링 안 함
+- OpenWeatherMap 미설정 → 날씨 위젯 미표시
+- Google Maps / Naver Maps 미설정 → 텍스트 경로 목록으로 fallback
 
 ### 3. 이메일 기반 관리자 인증
 별도 역할 관리 시스템 없이, Firebase Auth의 이메일과 Firestore 규칙에서 `kkjin722@gmail.com` 하드코딩으로 관리자 판별. MVP 단계에서 충분하며, 추후 역할 시스템으로 확장 가능.
@@ -424,11 +528,21 @@ Stripe, Resend, GA는 API 키가 없어도 앱이 정상 작동합니다:
 - [x] Stripe 결제 API 구현
 
 ### Phase 3 — 성장
-- [ ] 블로그 콘텐츠 추가 작성 (포항 여행 가이드 10개+)
+- [x] 블로그 콘텐츠 추가 작성 (7개 완료)
 - [ ] 다국어 지원 (일본어 — 일본 관광객 타겟)
-- [ ] Instagram 연동 + 피드 표시
-- [ ] 캘린더 예약 가능일 실시간 표시
+- [x] Instagram 연동 + 피드 표시
+- [x] 캘린더 예약 가능일 실시간 표시
 - [ ] 고객 리뷰 이메일 요청 자동화
+- [x] 시즌별 특별 투어 (겨울/봄/여름)
+- [x] 투어 비교 페이지
+- [x] 날씨 위젯
+- [x] 쿠폰/할인 시스템
+- [x] YouTube 영상 섹션
+- [x] Google/Naver Maps 투어 경로
+- [x] 외부 리뷰 배지 (Google/TripAdvisor)
+- [x] PWA 지원
+- [x] 관리자 대시보드 강화 (통계, 차트, CSV)
+- [x] 이메일 템플릿 브랜딩
 
 ### Phase 4 — 사업 등록 (법적)
 - [ ] 사업자등록 (관할 세무서)
