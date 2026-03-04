@@ -31,7 +31,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const signInWithGoogle = async () => {
-    await signInWithPopup(auth, googleProvider);
+    try {
+      await signInWithPopup(auth, googleProvider);
+    } catch (error: unknown) {
+      const err = error as { code?: string; message?: string };
+      console.error("Google sign-in error:", err.code, err.message);
+      if (err.code === "auth/popup-blocked") {
+        alert("Pop-up was blocked by your browser. Please allow pop-ups for this site.");
+      } else if (err.code === "auth/unauthorized-domain") {
+        alert("This domain is not authorized for sign-in. Please contact support.");
+      } else if (err.code !== "auth/popup-closed-by-user") {
+        alert("Sign-in failed. Please try again.");
+      }
+    }
   };
 
   const logout = async () => {
