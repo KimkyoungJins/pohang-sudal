@@ -62,6 +62,22 @@ export default function BookingForm() {
       // Firebase not configured yet
     }
 
+    // Send email notification
+    const tourTitle =
+      tours.find((t) => t.slug === data.tourSlug)?.title || data.tourSlug;
+    try {
+      await fetch("/api/send-email", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          type: "booking",
+          data: { ...data, tourTitle },
+        }),
+      });
+    } catch {
+      // Email send failed silently — booking is still saved
+    }
+
     setSubmitted(true);
     setLoading(false);
   };
