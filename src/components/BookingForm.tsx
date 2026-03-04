@@ -1,8 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import { tours } from "@/lib/tours";
+import { useAuth } from "@/components/AuthProvider";
 
 interface BookingData {
   name: string;
@@ -18,6 +19,7 @@ interface BookingData {
 export default function BookingForm() {
   const searchParams = useSearchParams();
   const preselectedTour = searchParams.get("tour") || "";
+  const { user } = useAuth();
 
   const [data, setData] = useState<BookingData>({
     name: "",
@@ -31,6 +33,16 @@ export default function BookingForm() {
   });
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (user) {
+      setData((prev) => ({
+        ...prev,
+        name: prev.name || user.displayName || "",
+        email: prev.email || user.email || "",
+      }));
+    }
+  }, [user]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
