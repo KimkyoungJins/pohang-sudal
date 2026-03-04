@@ -12,6 +12,10 @@ export interface Tour {
   meetingPoint: string;
   difficulty: "Easy" | "Moderate" | "Challenging";
   image: string;
+  seasonal?: boolean;
+  seasonalLabel?: string;
+  availableMonths?: number[];
+  availableDays?: number[];
 }
 
 export const tours: Tour[] = [
@@ -159,6 +163,112 @@ export const tours: Tour[] = [
     meetingPoint: "Hotel pickup available in central Pohang",
     difficulty: "Easy",
     image: "/images/hwanho.jpg",
+  },
+  {
+    slug: "winter-gwamegi",
+    title: "Winter Gwamegi & Hot Springs Tour",
+    subtitle: "Savor Pohang's iconic winter delicacy and warm up at local hot springs",
+    description:
+      "Winter in Pohang means gwamegi season — the city's signature semi-dried fish that's been a winter tradition for centuries. This tour takes you deep into Pohang's winter food culture, starting at Jukdo Market's gwamegi stalls where you'll learn to wrap and eat gwamegi like a local. Then warm up at a nearby hot springs spa (온천) to soak away the cold. End the day with a hearty seafood hotpot dinner overlooking the winter sea.",
+    duration: "5 hours (11:00 AM - 4:00 PM)",
+    price: 99,
+    groupSize: "2-8 people",
+    highlights: [
+      "Gwamegi tasting at Jukdo Market with local expert",
+      "Learn the traditional gwamegi preparation process",
+      "Relaxing hot springs (온천) experience",
+      "Hearty seafood hotpot dinner",
+      "Winter coastal scenery and photo spots",
+    ],
+    included: [
+      "Hotel pickup & drop-off in Pohang",
+      "Licensed English-speaking guide",
+      "Gwamegi tasting platter",
+      "Hot springs entrance fee",
+      "Seafood hotpot dinner",
+      "Bottled water and warm tea",
+    ],
+    notIncluded: [
+      "Personal hot springs supplies (towel rental available)",
+      "Gratuities (optional)",
+    ],
+    meetingPoint: "Hotel pickup available in central Pohang",
+    difficulty: "Easy",
+    image: "/images/gwamegi-winter.jpg",
+    seasonal: true,
+    seasonalLabel: "Winter Special",
+    availableMonths: [11, 12, 1, 2],
+    availableDays: [0, 2, 4, 6],
+  },
+  {
+    slug: "spring-cherry-blossom",
+    title: "Spring Cherry Blossom & Coastal Walk",
+    subtitle: "Experience Pohang's stunning cherry blossom trails along the coast",
+    description:
+      "When spring arrives in Pohang, the city transforms into a pink wonderland. This tour follows the most beautiful cherry blossom routes in the city, from the tree-lined paths along Hyeongsangang River to the coastal cherry blossom roads near Yeongildae Beach. Enjoy a traditional Korean spring picnic under the blossoms, visit a local flower café, and capture unforgettable photos at the best cherry blossom spots that only locals know about.",
+    duration: "4.5 hours (9:30 AM - 2:00 PM)",
+    price: 85,
+    groupSize: "2-10 people",
+    highlights: [
+      "Hyeongsangang River cherry blossom path",
+      "Yeongildae coastal cherry blossom road",
+      "Traditional Korean spring picnic (도시락)",
+      "Hidden local flower café visit",
+      "Best photography spots for cherry blossoms",
+    ],
+    included: [
+      "Hotel pickup & drop-off in Pohang",
+      "Licensed English-speaking guide",
+      "Korean spring picnic lunch (도시락)",
+      "Café drink included",
+      "Bottled water",
+    ],
+    notIncluded: ["Personal expenses", "Gratuities (optional)"],
+    meetingPoint: "Hotel pickup available in central Pohang",
+    difficulty: "Easy",
+    image: "/images/cherry-blossom.jpg",
+    seasonal: true,
+    seasonalLabel: "Spring Special",
+    availableMonths: [3, 4],
+    availableDays: [0, 1, 2, 3, 4, 5, 6],
+  },
+  {
+    slug: "summer-beach-adventure",
+    title: "Summer Beach & Water Sports Adventure",
+    subtitle: "Dive into Pohang's best beaches with snorkeling and kayaking",
+    description:
+      "Summer is the perfect time to experience Pohang's stunning coastline up close. This action-packed tour takes you to the city's best beaches for swimming, snorkeling, and sea kayaking. Start at Wolpo Beach for calm-water snorkeling where you can see colorful sea life, then head to Yeongildae Beach for sea kayaking with panoramic views of the coastline. Cool down with Korean shaved ice (빙수) and end the day watching the sunset at a beachside restaurant with fresh seafood.",
+    duration: "6 hours (10:00 AM - 4:00 PM)",
+    price: 110,
+    groupSize: "2-6 people",
+    highlights: [
+      "Snorkeling at Wolpo Beach with equipment provided",
+      "Sea kayaking at Yeongildae Beach",
+      "Korean shaved ice (빙수) at a beachside café",
+      "Fresh seafood lunch by the ocean",
+      "Stunning summer coastal scenery",
+    ],
+    included: [
+      "Hotel pickup & drop-off in Pohang",
+      "Licensed English-speaking guide",
+      "Snorkeling equipment rental",
+      "Kayak rental and safety gear",
+      "Seafood lunch",
+      "Korean shaved ice dessert",
+      "Bottled water",
+    ],
+    notIncluded: [
+      "Swimwear (please bring your own)",
+      "Waterproof phone case",
+      "Gratuities (optional)",
+    ],
+    meetingPoint: "Hotel pickup available in central Pohang",
+    difficulty: "Moderate",
+    image: "/images/summer-beach.jpg",
+    seasonal: true,
+    seasonalLabel: "Summer Special",
+    availableMonths: [6, 7, 8],
+    availableDays: [0, 1, 2, 3, 4, 5, 6],
   },
 ];
 

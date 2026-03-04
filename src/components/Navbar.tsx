@@ -19,7 +19,9 @@ export default function Navbar() {
 
   const links = [
     { href: "/tours", label: "Tours" },
+    { href: "/blog", label: "Blog" },
     { href: "/survey", label: "Help Me Choose" },
+    { href: "/faq", label: "FAQ" },
     { href: "/about", label: "About" },
   ];
 
@@ -41,7 +43,7 @@ export default function Navbar() {
               }`}
             >
               POHANG{" "}
-              <span className={scrolled ? "text-ocean" : "text-sunrise-light"}>
+              <span className={scrolled ? "text-sky" : "text-pink-pale"}>
                 SUDAL
               </span>
             </span>
@@ -55,8 +57,8 @@ export default function Navbar() {
                 href={link.href}
                 className={`text-sm tracking-wide hover:opacity-100 transition-all ${
                   scrolled
-                    ? "text-gray-600 hover:text-dark"
-                    : "text-white/70 hover:text-white"
+                    ? "text-gray-600 hover:text-sky"
+                    : "text-white/80 hover:text-white"
                 }`}
               >
                 {link.label}
@@ -65,10 +67,10 @@ export default function Navbar() {
 
             <Link
               href="/booking"
-              className={`text-sm tracking-widest uppercase px-6 py-2.5 border transition-all duration-300 ${
+              className={`text-sm tracking-widest uppercase px-6 py-2.5 rounded-full transition-all duration-300 ${
                 scrolled
-                  ? "border-dark text-dark hover:bg-dark hover:text-white"
-                  : "border-white/40 text-white hover:bg-white hover:text-dark"
+                  ? "bg-sky text-white hover:bg-sky-light"
+                  : "bg-white/20 backdrop-blur-sm text-white hover:bg-white hover:text-dark"
               }`}
             >
               Book Now
@@ -89,10 +91,10 @@ export default function Navbar() {
                       alt={user.displayName || "User"}
                       width={32}
                       height={32}
-                      className="rounded-full ring-2 ring-gold/50"
+                      className="rounded-full ring-2 ring-pink/50"
                     />
                   ) : (
-                    <div className="w-8 h-8 rounded-full bg-ocean text-white flex items-center justify-center text-sm font-medium">
+                    <div className="w-8 h-8 rounded-full bg-sky text-white flex items-center justify-center text-sm font-medium">
                       {(user.displayName || user.email || "U")[0].toUpperCase()}
                     </div>
                   )}
@@ -103,7 +105,7 @@ export default function Navbar() {
                       className="fixed inset-0 z-40"
                       onClick={() => setShowUserMenu(false)}
                     />
-                    <div className="absolute right-0 mt-3 w-56 bg-white rounded-lg shadow-xl border border-gray-100 py-2 z-50">
+                    <div className="absolute right-0 mt-3 w-56 bg-white rounded-2xl shadow-xl border border-gray-100 py-2 z-50">
                       <div className="px-4 py-3 border-b border-gray-100">
                         <p className="text-sm font-medium text-dark truncate">
                           {user.displayName}
@@ -117,7 +119,7 @@ export default function Navbar() {
                           logout();
                           setShowUserMenu(false);
                         }}
-                        className="w-full text-left px-4 py-2.5 text-sm text-gray-600 hover:bg-gray-50 transition-colors"
+                        className="w-full text-left px-4 py-2.5 text-sm text-gray-600 hover:bg-sky-pale transition-colors"
                       >
                         Sign Out
                       </button>
@@ -130,8 +132,8 @@ export default function Navbar() {
                 onClick={signInWithGoogle}
                 className={`text-sm transition-colors ${
                   scrolled
-                    ? "text-gray-500 hover:text-dark"
-                    : "text-white/60 hover:text-white"
+                    ? "text-gray-500 hover:text-sky"
+                    : "text-white/70 hover:text-white"
                 }`}
               >
                 Sign In
@@ -159,13 +161,13 @@ export default function Navbar() {
 
         {/* Mobile menu */}
         {isOpen && (
-          <div className="md:hidden bg-white rounded-lg shadow-xl mb-4 overflow-hidden">
+          <div className="md:hidden bg-white rounded-2xl shadow-xl mb-4 overflow-hidden">
             {links.map((link) => (
               <Link
                 key={link.href}
                 href={link.href}
                 onClick={() => setIsOpen(false)}
-                className="block py-4 px-6 text-gray-700 hover:bg-cream transition-colors border-b border-gray-50 text-sm tracking-wide"
+                className="block py-4 px-6 text-gray-700 hover:bg-sky-pale transition-colors border-b border-gray-50 text-sm tracking-wide"
               >
                 {link.label}
               </Link>
@@ -173,7 +175,7 @@ export default function Navbar() {
             <Link
               href="/booking"
               onClick={() => setIsOpen(false)}
-              className="block py-4 px-6 text-ocean font-medium text-sm tracking-wide"
+              className="block py-4 px-6 text-sky font-medium text-sm tracking-wide"
             >
               Book Now
             </Link>
@@ -194,7 +196,7 @@ export default function Navbar() {
                 ) : (
                   <button
                     onClick={() => { signInWithGoogle(); setIsOpen(false); }}
-                    className="text-sm text-ocean"
+                    className="text-sm text-sky"
                   >
                     Sign In with Google
                   </button>

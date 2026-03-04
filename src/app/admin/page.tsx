@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { useAuth } from "@/components/AuthProvider";
 import { db } from "@/lib/firebase";
 import {
@@ -52,6 +52,10 @@ export default function AdminPage() {
   const [surveys, setSurveys] = useState<Survey[]>([]);
   const [loading, setLoading] = useState(true);
 
+  // Date filter state
+  const [filterFrom, setFilterFrom] = useState("");
+  const [filterTo, setFilterTo] = useState("");
+
   const isAdmin = user?.email === ADMIN_EMAIL;
 
   useEffect(() => {
@@ -96,8 +100,11 @@ export default function AdminPage() {
   const getTourTitle = (slug: string) =>
     tours.find((t) => t.slug === slug)?.title || slug;
 
+  const getTourPrice = (slug: string) =>
+    tours.find((t) => t.slug === slug)?.price || 0;
+
   const formatDate = (ts: Timestamp | null) => {
-    if (!ts) return "—";
+    if (!ts) return "\u2014";
     return ts.toDate().toLocaleDateString("en-US", {
       year: "numeric",
       month: "short",
@@ -105,6 +112,117 @@ export default function AdminPage() {
       hour: "2-digit",
       minute: "2-digit",
     });
+  };
+
+  // --- Stats computations ---
+  const stats = useMemo(() => {
+    const totalBookings = bookings.length;
+
+    const estimatedRevenue = bookings.reduce((sum, b) => {
+      const price = getTourPrice(b.tourSlug);
+      const size = parseInt(b.groupSize, 10) || 1;
+      return sum + price * size;
+    }, 0);
+
+    // Count bookings per tour
+    const tourCounts: Record<string, number> = {};
+    bookings.forEach((b) => {
+      tourCounts[b.tourSlug] = (tourCounts[b.tourSlug] || 0) + 1;
+    });
+
+    let mostPopularTour = "\u2014";
+    let maxCount = 0;
+    Object.entries(tourCounts).forEach(([slug, count]) => {
+      if (count > maxCount) {
+        maxCount = count;
+        mostPopularTour = getTourTitle(slug);
+      }
+    });
+
+    // New this week
+    const oneWeekAgo = new Date();
+    oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+    const newThisWeek = bookings.filter((b) => {
+      if (!b.createdAt) return false;
+      return b.createdAt.toDate() >= oneWeekAgo;
+    }).length;
+
+    return { totalBookings, estimatedRevenue, mostPopularTour, newThisWeek, tourCounts };
+  }, [bookings]);
+
+  // --- Bar chart data ---
+  const chartData = useMemo(() => {
+    const maxCount = Math.max(...Object.values(stats.tourCounts), 1);
+    return tours
+      .map((t) => ({
+        slug: t.slug,
+        title: t.title,
+        count: stats.tourCounts[t.slug] || 0,
+        pct: ((stats.tourCounts[t.slug] || 0) / maxCount) * 100,
+      }))
+      .sort((a, b) => b.count - a.count);
+  }, [stats.tourCounts]);
+
+  const BAR_COLORS = [
+    "bg-teal-500",
+    "bg-blue-500",
+    "bg-indigo-500",
+    "bg-purple-500",
+    "bg-amber-500",
+    "bg-rose-500",
+    "bg-emerald-500",
+    "bg-cyan-500",
+  ];
+
+  // --- Date-filtered bookings ---
+  const filteredBookings = useMemo(() => {
+    return bookings.filter((b) => {
+      if (!filterFrom && !filterTo) return true;
+      if (!b.createdAt) return false;
+      const d = b.createdAt.toDate();
+      if (filterFrom) {
+        const from = new Date(filterFrom);
+        from.setHours(0, 0, 0, 0);
+        if (d < from) return false;
+      }
+      if (filterTo) {
+        const to = new Date(filterTo);
+        to.setHours(23, 59, 59, 999);
+        if (d > to) return false;
+      }
+      return true;
+    });
+  }, [bookings, filterFrom, filterTo]);
+
+  // --- CSV Export ---
+  const exportCSV = () => {
+    const header = ["Name", "Email", "Phone", "Tour", "Date", "Group Size", "Status", "Submitted"];
+    const rows = bookings.map((b) => [
+      b.name,
+      b.email,
+      b.phone,
+      getTourTitle(b.tourSlug),
+      b.date,
+      b.groupSize,
+      b.status,
+      b.createdAt ? b.createdAt.toDate().toISOString() : "",
+    ]);
+
+    const csvContent = [header, ...rows]
+      .map((row) =>
+        row.map((cell) => `"${String(cell).replace(/"/g, '""')}"`).join(",")
+      )
+      .join("\n");
+
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `bookings_${new Date().toISOString().slice(0, 10)}.csv`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
   };
 
   if (authLoading) {
@@ -155,27 +273,188 @@ export default function AdminPage() {
           </div>
         </div>
 
-        {/* Tabs */}
-        <div className="flex space-x-1 bg-gray-200 rounded-lg p-1 mb-6 max-w-xs">
+        {/* Stats Cards */}
+        {!loading && (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+            {/* Total Bookings */}
+            <div className="bg-white rounded-2xl shadow-sm p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-gray-500">Total Bookings</p>
+                  <p className="mt-1 text-3xl font-bold text-gray-900">
+                    {stats.totalBookings}
+                  </p>
+                </div>
+                <div className="w-12 h-12 bg-teal-100 rounded-full flex items-center justify-center">
+                  <svg
+                    className="w-6 h-6 text-teal-600"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
+                    />
+                  </svg>
+                </div>
+              </div>
+            </div>
+
+            {/* Estimated Revenue */}
+            <div className="bg-white rounded-2xl shadow-sm p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-gray-500">Estimated Revenue</p>
+                  <p className="mt-1 text-3xl font-bold text-gray-900">
+                    ${stats.estimatedRevenue.toLocaleString()}
+                  </p>
+                </div>
+                <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
+                  <svg
+                    className="w-6 h-6 text-green-600"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"
+                    />
+                  </svg>
+                </div>
+              </div>
+            </div>
+
+            {/* Most Popular Tour */}
+            <div className="bg-white rounded-2xl shadow-sm p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-gray-500">Most Popular Tour</p>
+                  <p className="mt-1 text-lg font-bold text-gray-900 leading-tight">
+                    {stats.mostPopularTour}
+                  </p>
+                </div>
+                <div className="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center">
+                  <svg
+                    className="w-6 h-6 text-purple-600"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"
+                    />
+                  </svg>
+                </div>
+              </div>
+            </div>
+
+            {/* New This Week */}
+            <div className="bg-white rounded-2xl shadow-sm p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-gray-500">New This Week</p>
+                  <p className="mt-1 text-3xl font-bold text-gray-900">
+                    {stats.newThisWeek}
+                  </p>
+                </div>
+                <div className="w-12 h-12 bg-amber-100 rounded-full flex items-center justify-center">
+                  <svg
+                    className="w-6 h-6 text-amber-600"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"
+                    />
+                  </svg>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Bookings by Tour Bar Chart */}
+        {!loading && bookings.length > 0 && (
+          <div className="bg-white rounded-2xl shadow-sm p-6 mb-8">
+            <h2 className="text-lg font-bold text-gray-900 mb-4">
+              Bookings by Tour
+            </h2>
+            <div className="space-y-3">
+              {chartData.map((item, idx) => (
+                <div key={item.slug} className="flex items-center gap-3">
+                  <div className="w-48 text-sm text-gray-700 truncate flex-shrink-0" title={item.title}>
+                    {item.title}
+                  </div>
+                  <div className="flex-1 bg-gray-100 rounded-full h-6 overflow-hidden">
+                    <div
+                      className={`h-6 rounded-full ${BAR_COLORS[idx % BAR_COLORS.length]} transition-all duration-500`}
+                      style={{ width: `${item.count > 0 ? Math.max(item.pct, 4) : 0}%` }}
+                    />
+                  </div>
+                  <div className="w-8 text-sm font-semibold text-gray-700 text-right flex-shrink-0">
+                    {item.count}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Tabs + CSV Export */}
+        <div className="flex items-center justify-between mb-6">
+          <div className="flex space-x-1 bg-gray-200 rounded-lg p-1 max-w-xs">
+            <button
+              onClick={() => setTab("bookings")}
+              className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors ${
+                tab === "bookings"
+                  ? "bg-white text-gray-900 shadow-sm"
+                  : "text-gray-600 hover:text-gray-900"
+              }`}
+            >
+              Bookings
+            </button>
+            <button
+              onClick={() => setTab("surveys")}
+              className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors ${
+                tab === "surveys"
+                  ? "bg-white text-gray-900 shadow-sm"
+                  : "text-gray-600 hover:text-gray-900"
+              }`}
+            >
+              Surveys
+            </button>
+          </div>
           <button
-            onClick={() => setTab("bookings")}
-            className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors ${
-              tab === "bookings"
-                ? "bg-white text-gray-900 shadow-sm"
-                : "text-gray-600 hover:text-gray-900"
-            }`}
+            onClick={exportCSV}
+            className="inline-flex items-center gap-2 px-4 py-2 bg-gray-900 text-white rounded-lg text-sm font-medium hover:bg-gray-800 transition-colors"
           >
-            Bookings
-          </button>
-          <button
-            onClick={() => setTab("surveys")}
-            className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors ${
-              tab === "surveys"
-                ? "bg-white text-gray-900 shadow-sm"
-                : "text-gray-600 hover:text-gray-900"
-            }`}
-          >
-            Surveys
+            <svg
+              className="w-4 h-4"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
+              />
+            </svg>
+            Export CSV
           </button>
         </div>
 
@@ -184,10 +463,46 @@ export default function AdminPage() {
         ) : tab === "bookings" ? (
           /* Bookings Table */
           <div className="bg-white rounded-2xl shadow-sm overflow-hidden">
-            {bookings.length === 0 ? (
+            {/* Date Filter Row */}
+            <div className="px-4 py-3 border-b border-gray-100 flex flex-wrap items-center gap-3 bg-gray-50">
+              <span className="text-sm font-medium text-gray-600">Filter by date:</span>
+              <input
+                type="date"
+                value={filterFrom}
+                onChange={(e) => setFilterFrom(e.target.value)}
+                className="border border-gray-300 rounded-md px-3 py-1.5 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+              />
+              <span className="text-sm text-gray-400">to</span>
+              <input
+                type="date"
+                value={filterTo}
+                onChange={(e) => setFilterTo(e.target.value)}
+                className="border border-gray-300 rounded-md px-3 py-1.5 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+              />
+              {(filterFrom || filterTo) && (
+                <button
+                  onClick={() => {
+                    setFilterFrom("");
+                    setFilterTo("");
+                  }}
+                  className="px-3 py-1.5 bg-gray-200 text-gray-600 rounded-md text-sm hover:bg-gray-300 transition-colors"
+                >
+                  Reset
+                </button>
+              )}
+              {(filterFrom || filterTo) && (
+                <span className="text-xs text-gray-400 ml-auto">
+                  Showing {filteredBookings.length} of {bookings.length} bookings
+                </span>
+              )}
+            </div>
+
+            {filteredBookings.length === 0 ? (
               <div className="text-center py-16 text-gray-400">
                 <div className="text-4xl mb-2">📭</div>
-                No bookings yet
+                {bookings.length === 0
+                  ? "No bookings yet"
+                  : "No bookings match the selected date range"}
               </div>
             ) : (
               <div className="overflow-x-auto">
@@ -204,7 +519,7 @@ export default function AdminPage() {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-100">
-                    {bookings.map((booking) => (
+                    {filteredBookings.map((booking) => (
                       <tr key={booking.id} className="hover:bg-gray-50">
                         <td className="px-4 py-3">
                           <span
@@ -302,10 +617,10 @@ export default function AdminPage() {
                     {surveys.map((survey) => (
                       <tr key={survey.id} className="hover:bg-gray-50">
                         <td className="px-4 py-3 font-medium text-gray-900">
-                          {survey.name || "—"}
+                          {survey.name || "\u2014"}
                         </td>
                         <td className="px-4 py-3 text-gray-500">
-                          {survey.email || "—"}
+                          {survey.email || "\u2014"}
                         </td>
                         <td className="px-4 py-3">
                           <div className="flex flex-wrap gap-1">
@@ -320,7 +635,7 @@ export default function AdminPage() {
                           </div>
                         </td>
                         <td className="px-4 py-3 text-gray-700">
-                          {survey.travelDates || "—"}
+                          {survey.travelDates || "\u2014"}
                         </td>
                         <td className="px-4 py-3">
                           <div className="flex flex-wrap gap-1">

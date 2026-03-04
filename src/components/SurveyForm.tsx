@@ -120,7 +120,7 @@ export default function SurveyForm() {
   const steps = [
     // Step 0: Interests
     <div key="interests">
-      <h2 className="text-2xl font-bold text-gray-900 mb-2">
+      <h2 className="font-serif text-2xl text-dark mb-2">
         What interests you most?
       </h2>
       <p className="text-gray-500 mb-6">Select all that apply</p>
@@ -138,8 +138,8 @@ export default function SurveyForm() {
             onClick={() => toggleInterest(item.id)}
             className={`p-4 rounded-xl border-2 text-sm font-medium transition-all ${
               data.interests.includes(item.id)
-                ? "border-teal-500 bg-teal-50 text-teal-700"
-                : "border-gray-200 hover:border-gray-300 text-gray-600"
+                ? "border-sky bg-sky-pale text-sky"
+                : "border-gray-200 hover:border-pink-light text-gray-600"
             }`}
           >
             {item.label}
@@ -150,7 +150,7 @@ export default function SurveyForm() {
 
     // Step 1: Duration & Budget
     <div key="logistics">
-      <h2 className="text-2xl font-bold text-gray-900 mb-6">
+      <h2 className="font-serif text-2xl text-dark mb-6">
         Tour preferences
       </h2>
       <div className="space-y-6">
@@ -169,8 +169,8 @@ export default function SurveyForm() {
                 onClick={() => setData((p) => ({ ...p, duration: item.id }))}
                 className={`p-3 rounded-xl border-2 text-sm font-medium transition-all ${
                   data.duration === item.id
-                    ? "border-teal-500 bg-teal-50 text-teal-700"
-                    : "border-gray-200 hover:border-gray-300 text-gray-600"
+                    ? "border-pink bg-pink-pale text-pink"
+                    : "border-gray-200 hover:border-sky-light text-gray-600"
                 }`}
               >
                 {item.label}
@@ -193,8 +193,8 @@ export default function SurveyForm() {
                 onClick={() => setData((p) => ({ ...p, budget: item.id }))}
                 className={`p-3 rounded-xl border-2 text-sm font-medium transition-all ${
                   data.budget === item.id
-                    ? "border-teal-500 bg-teal-50 text-teal-700"
-                    : "border-gray-200 hover:border-gray-300 text-gray-600"
+                    ? "border-pink bg-pink-pale text-pink"
+                    : "border-gray-200 hover:border-sky-light text-gray-600"
                 }`}
               >
                 {item.label}
@@ -207,7 +207,7 @@ export default function SurveyForm() {
 
     // Step 2: Group & Fitness
     <div key="group">
-      <h2 className="text-2xl font-bold text-gray-900 mb-6">
+      <h2 className="font-serif text-2xl text-dark mb-6">
         About your group
       </h2>
       <div className="space-y-6">
@@ -226,8 +226,8 @@ export default function SurveyForm() {
                 onClick={() => setData((p) => ({ ...p, groupSize: item.id }))}
                 className={`p-3 rounded-xl border-2 text-sm font-medium transition-all ${
                   data.groupSize === item.id
-                    ? "border-teal-500 bg-teal-50 text-teal-700"
-                    : "border-gray-200 hover:border-gray-300 text-gray-600"
+                    ? "border-sky bg-sky-pale text-sky"
+                    : "border-gray-200 hover:border-pink-light text-gray-600"
                 }`}
               >
                 {item.label}
@@ -252,8 +252,8 @@ export default function SurveyForm() {
                 }
                 className={`p-3 rounded-xl border-2 text-sm font-medium transition-all ${
                   data.fitnessLevel === item.id
-                    ? "border-teal-500 bg-teal-50 text-teal-700"
-                    : "border-gray-200 hover:border-gray-300 text-gray-600"
+                    ? "border-sky bg-sky-pale text-sky"
+                    : "border-gray-200 hover:border-pink-light text-gray-600"
                 }`}
               >
                 {item.label}
@@ -266,7 +266,7 @@ export default function SurveyForm() {
 
     // Step 3: Contact Info
     <div key="contact">
-      <h2 className="text-2xl font-bold text-gray-900 mb-2">
+      <h2 className="font-serif text-2xl text-dark mb-2">
         Almost done!
       </h2>
       <p className="text-gray-500 mb-6">
@@ -282,7 +282,7 @@ export default function SurveyForm() {
             type="text"
             value={data.name}
             onChange={(e) => setData((p) => ({ ...p, name: e.target.value }))}
-            className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-teal-500 focus:border-transparent outline-none"
+            className="w-full border border-gray-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-sky focus:border-transparent outline-none"
             placeholder="Your name"
           />
         </div>
@@ -294,7 +294,7 @@ export default function SurveyForm() {
             type="email"
             value={data.email}
             onChange={(e) => setData((p) => ({ ...p, email: e.target.value }))}
-            className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-teal-500 focus:border-transparent outline-none"
+            className="w-full border border-gray-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-sky focus:border-transparent outline-none"
             placeholder="your@email.com"
           />
         </div>
@@ -308,7 +308,7 @@ export default function SurveyForm() {
             onChange={(e) =>
               setData((p) => ({ ...p, travelDates: e.target.value }))
             }
-            className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-teal-500 focus:border-transparent outline-none"
+            className="w-full border border-gray-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-sky focus:border-transparent outline-none"
             placeholder="e.g., March 15-20, 2026"
           />
         </div>
@@ -322,7 +322,7 @@ export default function SurveyForm() {
               setData((p) => ({ ...p, specialRequests: e.target.value }))
             }
             rows={3}
-            className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-teal-500 focus:border-transparent outline-none"
+            className="w-full border border-gray-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-sky focus:border-transparent outline-none"
             placeholder="Any dietary needs, accessibility requirements, or questions?"
           />
         </div>
@@ -335,7 +335,7 @@ export default function SurveyForm() {
     return (
       <div className="max-w-2xl mx-auto text-center">
         <div className="text-6xl mb-4">🎉</div>
-        <h2 className="text-3xl font-bold text-gray-900 mb-3">
+        <h2 className="font-serif text-3xl text-dark mb-3">
           Here are your recommended tours!
         </h2>
         <p className="text-gray-500 mb-8">
@@ -346,19 +346,19 @@ export default function SurveyForm() {
             <Link
               key={tour.slug}
               href={`/tours/${tour.slug}`}
-              className="block bg-white rounded-xl shadow-md p-6 hover:shadow-lg transition-shadow text-left"
+              className="block bg-white rounded-2xl shadow-md p-6 hover:shadow-lg transition-shadow text-left border border-sky-pale"
             >
               <div className="flex items-center justify-between">
                 <div>
-                  <h3 className="text-lg font-bold text-gray-900">
+                  <h3 className="font-serif text-lg text-dark">
                     {tour.title}
                   </h3>
                   <p className="text-gray-500 text-sm">{tour.subtitle}</p>
-                  <p className="text-teal-600 font-semibold mt-1">
+                  <p className="text-pink font-semibold mt-1">
                     From ${tour.price} · {tour.duration.split("(")[0].trim()}
                   </p>
                 </div>
-                <span className="text-teal-600 text-2xl">→</span>
+                <span className="text-sky text-2xl">→</span>
               </div>
             </Link>
           ))}
@@ -366,7 +366,7 @@ export default function SurveyForm() {
         <div className="mt-8 space-y-3">
           <Link
             href="/booking"
-            className="inline-block bg-teal-600 text-white px-8 py-3 rounded-full font-semibold hover:bg-teal-700 transition-colors"
+            className="inline-block bg-gradient-to-r from-sky to-pink text-white px-8 py-3 rounded-full font-semibold hover:opacity-90 transition-opacity"
           >
             Book a Tour Now
           </Link>
@@ -387,7 +387,9 @@ export default function SurveyForm() {
           <div
             key={i}
             className={`h-2 flex-1 rounded-full transition-colors ${
-              i <= step ? "bg-teal-500" : "bg-gray-200"
+              i <= step
+                ? "bg-gradient-to-r from-sky to-pink"
+                : "bg-gray-200"
             }`}
           />
         ))}
@@ -400,7 +402,7 @@ export default function SurveyForm() {
           {step > 0 ? (
             <button
               onClick={() => setStep(step - 1)}
-              className="text-gray-600 font-medium hover:text-gray-900 transition-colors"
+              className="text-gray-600 font-medium hover:text-dark transition-colors"
             >
               ← Back
             </button>
@@ -411,7 +413,7 @@ export default function SurveyForm() {
           {step < steps.length - 1 ? (
             <button
               onClick={() => setStep(step + 1)}
-              className="bg-teal-600 text-white px-6 py-2 rounded-full font-medium hover:bg-teal-700 transition-colors"
+              className="bg-sky text-white px-6 py-2 rounded-full font-medium hover:bg-sky-light transition-colors"
             >
               Next →
             </button>
@@ -419,7 +421,7 @@ export default function SurveyForm() {
             <button
               onClick={handleSubmit}
               disabled={loading}
-              className="bg-teal-600 text-white px-6 py-2 rounded-full font-medium hover:bg-teal-700 transition-colors disabled:opacity-50"
+              className="bg-gradient-to-r from-sky to-pink text-white px-6 py-2 rounded-full font-medium hover:opacity-90 transition-opacity disabled:opacity-50"
             >
               {loading ? "Getting your results..." : "Get My Recommendations"}
             </button>

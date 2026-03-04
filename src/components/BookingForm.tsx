@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import { tours } from "@/lib/tours";
+import { validateCoupon } from "@/lib/coupons";
 import { useAuth } from "@/components/AuthProvider";
 
 interface BookingData {
@@ -33,6 +34,10 @@ export default function BookingForm() {
   });
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [couponCode, setCouponCode] = useState("");
+  const [couponMessage, setCouponMessage] = useState("");
+  const [couponDiscount, setCouponDiscount] = useState(0);
+  const [appliedCoupon, setAppliedCoupon] = useState("");
 
   useEffect(() => {
     if (user) {
@@ -85,11 +90,29 @@ export default function BookingForm() {
   const update = (field: keyof BookingData, value: string) =>
     setData((p) => ({ ...p, [field]: value }));
 
+  const selectedTour = tours.find((t) => t.slug === data.tourSlug);
+  const tourPrice = selectedTour?.price || 0;
+
+  const handleApplyCoupon = () => {
+    if (!couponCode.trim()) return;
+    const groupNum = parseInt(data.groupSize) || 1;
+    const result = validateCoupon(couponCode, tourPrice, groupNum);
+    if (result.valid && result.discount) {
+      setCouponDiscount(result.discount);
+      setAppliedCoupon(couponCode.toUpperCase());
+      setCouponMessage(`${result.coupon!.description} (-$${result.discount})`);
+    } else {
+      setCouponDiscount(0);
+      setAppliedCoupon("");
+      setCouponMessage(result.error || "Invalid coupon");
+    }
+  };
+
   if (submitted) {
     return (
       <div className="max-w-lg mx-auto text-center bg-white rounded-2xl shadow-md p-8">
         <div className="text-6xl mb-4">✅</div>
-        <h2 className="text-2xl font-bold text-gray-900 mb-2">
+        <h2 className="font-serif text-2xl text-dark mb-2">
           Booking Request Received!
         </h2>
         <p className="text-gray-500 mb-2">
@@ -108,7 +131,7 @@ export default function BookingForm() {
       onSubmit={handleSubmit}
       className="max-w-2xl mx-auto bg-white rounded-2xl shadow-md p-6 sm:p-8"
     >
-      <h2 className="text-2xl font-bold text-gray-900 mb-6">
+      <h2 className="font-serif text-2xl text-dark mb-6">
         Book Your Pohang Adventure
       </h2>
 
@@ -123,7 +146,7 @@ export default function BookingForm() {
             required
             value={data.name}
             onChange={(e) => update("name", e.target.value)}
-            className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-teal-500 focus:border-transparent outline-none"
+            className="w-full border border-gray-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-sky focus:border-transparent outline-none"
             placeholder="John Smith"
           />
         </div>
@@ -138,7 +161,7 @@ export default function BookingForm() {
             required
             value={data.email}
             onChange={(e) => update("email", e.target.value)}
-            className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-teal-500 focus:border-transparent outline-none"
+            className="w-full border border-gray-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-sky focus:border-transparent outline-none"
             placeholder="john@example.com"
           />
         </div>
@@ -152,7 +175,7 @@ export default function BookingForm() {
             type="tel"
             value={data.phone}
             onChange={(e) => update("phone", e.target.value)}
-            className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-teal-500 focus:border-transparent outline-none"
+            className="w-full border border-gray-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-sky focus:border-transparent outline-none"
             placeholder="+1 234 567 8900"
           />
         </div>
@@ -166,7 +189,7 @@ export default function BookingForm() {
             type="text"
             value={data.nationality}
             onChange={(e) => update("nationality", e.target.value)}
-            className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-teal-500 focus:border-transparent outline-none"
+            className="w-full border border-gray-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-sky focus:border-transparent outline-none"
             placeholder="e.g., American, British"
           />
         </div>
@@ -180,7 +203,7 @@ export default function BookingForm() {
             required
             value={data.tourSlug}
             onChange={(e) => update("tourSlug", e.target.value)}
-            className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-teal-500 focus:border-transparent outline-none bg-white"
+            className="w-full border border-gray-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-sky focus:border-transparent outline-none bg-white"
           >
             <option value="">Choose a tour...</option>
             {tours.map((tour) => (
@@ -202,7 +225,7 @@ export default function BookingForm() {
             required
             value={data.date}
             onChange={(e) => update("date", e.target.value)}
-            className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-teal-500 focus:border-transparent outline-none"
+            className="w-full border border-gray-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-sky focus:border-transparent outline-none"
           />
         </div>
 
@@ -215,7 +238,7 @@ export default function BookingForm() {
             required
             value={data.groupSize}
             onChange={(e) => update("groupSize", e.target.value)}
-            className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-teal-500 focus:border-transparent outline-none bg-white"
+            className="w-full border border-gray-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-sky focus:border-transparent outline-none bg-white"
           >
             <option value="">Select group size...</option>
             <option value="1">1 person</option>
@@ -236,16 +259,64 @@ export default function BookingForm() {
             value={data.message}
             onChange={(e) => update("message", e.target.value)}
             rows={3}
-            className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-teal-500 focus:border-transparent outline-none"
+            className="w-full border border-gray-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-sky focus:border-transparent outline-none"
             placeholder="Any special requests, dietary needs, or questions?"
           />
         </div>
       </div>
 
+      {/* Coupon Code */}
+      <div className="mt-4">
+        <label className="block text-sm font-medium text-gray-700 mb-1">
+          Coupon Code
+        </label>
+        <div className="flex gap-2">
+          <input
+            type="text"
+            value={couponCode}
+            onChange={(e) => setCouponCode(e.target.value)}
+            className="flex-1 border border-gray-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-sky focus:border-transparent outline-none uppercase"
+            placeholder="Enter coupon code"
+          />
+          <button
+            type="button"
+            onClick={handleApplyCoupon}
+            className="bg-sky text-white px-5 py-3 rounded-xl font-medium hover:bg-sky/90 transition-colors text-sm"
+          >
+            Apply
+          </button>
+        </div>
+        {couponMessage && (
+          <p
+            className={`text-xs mt-1 ${
+              appliedCoupon ? "text-green-600" : "text-coral"
+            }`}
+          >
+            {couponMessage}
+          </p>
+        )}
+        {appliedCoupon && tourPrice > 0 && (
+          <div className="mt-2 bg-green-50 rounded-lg p-3 text-sm">
+            <div className="flex justify-between text-gray-600">
+              <span>Original price:</span>
+              <span>${tourPrice}/person</span>
+            </div>
+            <div className="flex justify-between text-green-600 font-medium">
+              <span>Discount ({appliedCoupon}):</span>
+              <span>-${couponDiscount}</span>
+            </div>
+            <div className="flex justify-between text-dark font-bold border-t border-green-200 mt-1 pt-1">
+              <span>Final price:</span>
+              <span>${(tourPrice - couponDiscount).toFixed(2)}/person</span>
+            </div>
+          </div>
+        )}
+      </div>
+
       <button
         type="submit"
         disabled={loading}
-        className="w-full mt-6 bg-teal-600 text-white py-3 rounded-full font-semibold hover:bg-teal-700 transition-colors disabled:opacity-50"
+        className="w-full mt-6 bg-gradient-to-r from-sky to-pink text-white py-3 rounded-full font-semibold hover:opacity-90 transition-opacity disabled:opacity-50"
       >
         {loading ? "Sending..." : "Send Booking Request"}
       </button>

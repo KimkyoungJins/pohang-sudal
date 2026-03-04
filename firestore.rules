@@ -13,5 +13,14 @@ service cloud.firestore {
       allow create: if true;
       allow read, update, delete: if isAdmin();
     }
+    match /reviews/{document} {
+      allow read: if true;
+      allow create: if request.auth != null;
+      allow update, delete: if isAdmin();
+    }
+    match /newsletter/{document} {
+      allow create: if true;
+      allow read, update, delete: if isAdmin();
+    }
   }
 }

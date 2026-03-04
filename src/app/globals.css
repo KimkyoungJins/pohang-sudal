@@ -2,15 +2,21 @@
 
 @theme inline {
   --color-background: #ffffff;
-  --color-foreground: #1a1a1a;
-  --color-cream: #f8f5f0;
-  --color-sand: #e8e0d4;
-  --color-ocean: #1b4d6e;
-  --color-ocean-light: #2a6f97;
-  --color-sunrise: #e07a3a;
-  --color-sunrise-light: #f4a261;
-  --color-gold: #c8a45c;
-  --color-dark: #0f1419;
+  --color-foreground: #2d2d2d;
+  --color-sky: #5eb8f0;
+  --color-sky-light: #a3d5f7;
+  --color-sky-pale: #e8f4fc;
+  --color-pink: #f28dac;
+  --color-pink-light: #fbb4c9;
+  --color-pink-pale: #fde8ef;
+  --color-coral: #f7806a;
+  --color-peach: #ffe0d0;
+  --color-lavender: #c4b5f5;
+  --color-mint: #7ed6c3;
+  --color-cream: #faf8f5;
+  --color-warm: #fff9f5;
+  --color-dark: #2d2d2d;
+  --color-gold: #d4a853;
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
@@ -25,21 +31,13 @@ body {
   font-family: var(--font-sans), Arial, Helvetica, sans-serif;
 }
 
-/* Premium serif headings */
 .font-serif {
   font-family: Georgia, "Times New Roman", serif;
 }
 
-/* Smooth fade-in animation */
 @keyframes fadeUp {
-  from {
-    opacity: 0;
-    transform: translateY(30px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 .animate-fade-up {
@@ -56,17 +54,23 @@ body {
   opacity: 0;
 }
 
-/* Parallax-like overlay */
-.hero-overlay {
-  background: linear-gradient(
-    to bottom,
-    rgba(15, 20, 25, 0.3) 0%,
-    rgba(15, 20, 25, 0.1) 40%,
-    rgba(15, 20, 25, 0.5) 100%
-  );
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
 }
 
-/* Image hover zoom */
+.animate-float {
+  animation: float 4s ease-in-out infinite;
+}
+
+.animate-float-delay {
+  animation: float 4s ease-in-out 1s infinite;
+}
+
+.hero-gradient {
+  background: linear-gradient(135deg, #5eb8f0 0%, #a3d5f7 25%, #fbb4c9 50%, #f28dac 75%, #f7806a 100%);
+}
+
 .img-zoom {
   overflow: hidden;
 }
@@ -81,21 +85,12 @@ body {
   transform: scale(1.05);
 }
 
-/* Gold underline accent */
-.gold-line::after {
+.pink-line-center::after {
   content: "";
   display: block;
   width: 60px;
-  height: 2px;
-  background: var(--color-gold);
-  margin-top: 16px;
-}
-
-.gold-line-center::after {
-  content: "";
-  display: block;
-  width: 60px;
-  height: 2px;
-  background: var(--color-gold);
+  height: 3px;
+  background: linear-gradient(to right, var(--color-sky), var(--color-pink));
   margin: 16px auto 0;
+  border-radius: 2px;
 }
