@@ -2,78 +2,71 @@ import Link from "next/link";
 
 export default function Hero() {
   return (
-    <section className="relative min-h-screen flex items-center justify-center bg-gradient-to-br from-teal-600 via-blue-600 to-indigo-700 overflow-hidden">
-      {/* Background pattern */}
-      <div className="absolute inset-0 opacity-10">
-        <div className="absolute top-20 left-10 text-[200px]">🦦</div>
-        <div className="absolute bottom-10 right-10 text-[150px]">🌊</div>
+    <section className="relative h-screen min-h-[700px] flex items-end justify-start overflow-hidden">
+      {/* Background image placeholder */}
+      <div className="absolute inset-0 bg-gradient-to-br from-ocean via-[#1a3a5c] to-dark" />
+
+      {/* Overlay */}
+      <div className="absolute inset-0 hero-overlay" />
+
+      {/* Top badge */}
+      <div className="absolute top-24 left-0 right-0 text-center z-10 animate-fade-up">
+        <span className="inline-block text-gold tracking-[0.3em] uppercase text-xs font-medium">
+          Licensed Tour Guide &middot; Pohang, South Korea
+        </span>
       </div>
 
-      <div className="relative z-10 max-w-4xl mx-auto px-4 text-center text-white">
-        <div className="inline-block bg-white/10 backdrop-blur-sm rounded-full px-4 py-2 mb-6">
-          <span className="text-sm font-medium">
-            🦦 Licensed Tour Guide in Pohang, South Korea
-          </span>
+      {/* Center title */}
+      <div className="absolute inset-0 flex items-center justify-center z-10">
+        <div className="text-center px-4">
+          <h1 className="font-serif text-5xl sm:text-7xl md:text-8xl text-white leading-tight animate-fade-up">
+            Discover
+            <br />
+            <em className="text-sunrise-light">Pohang</em>
+          </h1>
+          <p className="text-white/60 text-lg sm:text-xl mt-6 max-w-md mx-auto animate-fade-up-delay font-light">
+            Explore Korea&apos;s hidden coastal gem with a certified local guide
+          </p>
         </div>
+      </div>
 
-        <h1 className="text-4xl sm:text-5xl md:text-7xl font-extrabold leading-tight mb-6">
-          Discover Pohang
-          <br />
-          <span className="text-teal-200">Like a Local</span>
-        </h1>
-
-        <p className="text-lg sm:text-xl text-white/85 max-w-2xl mx-auto mb-10 leading-relaxed">
-          Explore Korea&apos;s hidden coastal gem with a certified local guide.
-          From stunning sunrises to fresh seafood markets, experience the real
-          Pohang that most tourists never see.
-        </p>
-
-        <div className="flex flex-col sm:flex-row gap-4 justify-center">
+      {/* Bottom CTA */}
+      <div className="relative z-10 w-full pb-16 px-4 sm:px-8">
+        <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-6 animate-fade-up-delay-2">
+          <div className="flex items-center space-x-8 text-white/50 text-sm tracking-wide">
+            <span>5 Curated Tours</span>
+            <span className="hidden sm:inline">&middot;</span>
+            <span>English Speaking</span>
+            <span className="hidden sm:inline">&middot;</span>
+            <span>Private & Group</span>
+          </div>
           <Link
             href="/tours"
-            className="bg-white text-teal-700 px-8 py-4 rounded-full font-bold text-lg hover:bg-teal-50 transition-colors shadow-lg"
+            className="group flex items-center space-x-3 border border-white/30 text-white px-8 py-4 hover:bg-white hover:text-dark transition-all duration-500"
           >
-            Explore Our Tours
+            <span className="tracking-widest uppercase text-sm font-medium">
+              Explore Tours
+            </span>
+            <svg
+              className="w-4 h-4 group-hover:translate-x-1 transition-transform"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={1.5}
+                d="M17 8l4 4m0 0l-4 4m4-4H3"
+              />
+            </svg>
           </Link>
-          <Link
-            href="/survey"
-            className="border-2 border-white text-white px-8 py-4 rounded-full font-bold text-lg hover:bg-white/10 transition-colors"
-          >
-            Help Me Choose
-          </Link>
-        </div>
-
-        <div className="mt-16 grid grid-cols-3 gap-6 max-w-md mx-auto text-center">
-          <div>
-            <div className="text-3xl font-bold">5+</div>
-            <div className="text-white/70 text-sm">Unique Tours</div>
-          </div>
-          <div>
-            <div className="text-3xl font-bold">100%</div>
-            <div className="text-white/70 text-sm">Local Expert</div>
-          </div>
-          <div>
-            <div className="text-3xl font-bold">EN</div>
-            <div className="text-white/70 text-sm">English Guide</div>
-          </div>
         </div>
       </div>
 
       {/* Scroll indicator */}
-      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce">
-        <svg
-          className="w-6 h-6 text-white/60"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M19 14l-7 7m0 0l-7-7m7 7V3"
-          />
-        </svg>
+      <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-10">
+        <div className="w-[1px] h-12 bg-gradient-to-b from-transparent to-white/40" />
       </div>
     </section>
   );

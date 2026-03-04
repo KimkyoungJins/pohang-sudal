@@ -2,7 +2,15 @@
 
 @theme inline {
   --color-background: #ffffff;
-  --color-foreground: #171717;
+  --color-foreground: #1a1a1a;
+  --color-cream: #f8f5f0;
+  --color-sand: #e8e0d4;
+  --color-ocean: #1b4d6e;
+  --color-ocean-light: #2a6f97;
+  --color-sunrise: #e07a3a;
+  --color-sunrise-light: #f4a261;
+  --color-gold: #c8a45c;
+  --color-dark: #0f1419;
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
@@ -15,4 +23,79 @@ body {
   background: var(--color-background);
   color: var(--color-foreground);
   font-family: var(--font-sans), Arial, Helvetica, sans-serif;
+}
+
+/* Premium serif headings */
+.font-serif {
+  font-family: Georgia, "Times New Roman", serif;
+}
+
+/* Smooth fade-in animation */
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-up {
+  animation: fadeUp 0.8s ease-out forwards;
+}
+
+.animate-fade-up-delay {
+  animation: fadeUp 0.8s ease-out 0.2s forwards;
+  opacity: 0;
+}
+
+.animate-fade-up-delay-2 {
+  animation: fadeUp 0.8s ease-out 0.4s forwards;
+  opacity: 0;
+}
+
+/* Parallax-like overlay */
+.hero-overlay {
+  background: linear-gradient(
+    to bottom,
+    rgba(15, 20, 25, 0.3) 0%,
+    rgba(15, 20, 25, 0.1) 40%,
+    rgba(15, 20, 25, 0.5) 100%
+  );
+}
+
+/* Image hover zoom */
+.img-zoom {
+  overflow: hidden;
+}
+
+.img-zoom img,
+.img-zoom .img-placeholder {
+  transition: transform 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.img-zoom:hover img,
+.img-zoom:hover .img-placeholder {
+  transform: scale(1.05);
+}
+
+/* Gold underline accent */
+.gold-line::after {
+  content: "";
+  display: block;
+  width: 60px;
+  height: 2px;
+  background: var(--color-gold);
+  margin-top: 16px;
+}
+
+.gold-line-center::after {
+  content: "";
+  display: block;
+  width: 60px;
+  height: 2px;
+  background: var(--color-gold);
+  margin: 16px auto 0;
 }
